@@ -1,5 +1,18 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
+import './index.css';
+
+const Notification = ({ message, color }) => {
+  if (message === null) {
+    return null
+  } else{
+    return (
+    <div className={color}>
+      {message}
+    </div>
+  )
+    }
+}
 
 const Filter = ({ value, onChange }) => {
   return (
@@ -56,6 +69,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterText, setFilterText] = useState("");
+  const [message, setMessage] = useState("");
+  const [color, setColor] = useState("invisible");
 
   useEffect(() => {
     personService.get("http://localhost:3001/persons").then((response) => {
@@ -72,11 +87,15 @@ const App = () => {
 
     if (!persons.some((person) => person.name === personObject.name)) {
       personService.create(personObject).then((response) => {
-        setPersons(persons.concat(response.data));
+        console.log(response)
+        setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
-      });
-    } else {
+        setMessage(`Added ${response.name} to the phonebook`)
+        setColor("green")
+      })
+    }
+    else {
       if (
         window.confirm(
           `${newName} is already added to phonebook, do you want to replace the old number with new one?`
@@ -87,8 +106,20 @@ const App = () => {
             persons.find((person) => person.name === personObject.name).id,
             personObject
           )
+          .then(() => {
+            setMessage(`Updated ${personObject.name} in the phonebook`);
+            setColor("green");
+          })
+          .catch((error) => {
+            console.log(error)
+            setMessage(`Information of '${personObject.name}' was already removed from server`);
+            setColor("red");
+            setTimeout(() => {
+              setColor("invisible");
+            }, 5000);
+          });
       }
-    }
+  }
   };
 
   const handleDeletePerson = (id, name) => {
@@ -115,6 +146,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} color={color}/>
       <Filter value={filterText} onChange={handleFilterTextChange} />
       <h2>Add new</h2>
       <PersonForm
