@@ -76,7 +76,7 @@ const App = () => {
     personService.get("http://localhost:3001/persons").then((response) => {
       setPersons(response.data);
     });
-  }, [persons]);
+  }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
