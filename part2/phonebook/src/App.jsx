@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 import personService from "./services/persons";
-import './index.css';
+import "./index.css";
 
 const Notification = ({ message, color }) => {
   if (message === null) {
-    return null
-  } else{
-    return (
-    <div className={color}>
-      {message}
-    </div>
-  )
-    }
-}
+    return null;
+  } else {
+    return <div className={color}>{message}</div>;
+  }
+};
 
 const Filter = ({ value, onChange }) => {
   return (
@@ -87,15 +83,14 @@ const App = () => {
 
     if (!persons.some((person) => person.name === personObject.name)) {
       personService.create(personObject).then((response) => {
-        console.log(response)
+        console.log(response);
         setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
-        setMessage(`Added ${response.name} to the phonebook`)
-        setColor("green")
-      })
-    }
-    else {
+        setMessage(`Added ${response.name} to the phonebook`);
+        setColor("green");
+      });
+    } else {
       if (
         window.confirm(
           `${newName} is already added to phonebook, do you want to replace the old number with new one?`
@@ -111,15 +106,17 @@ const App = () => {
             setColor("green");
           })
           .catch((error) => {
-            console.log(error)
-            setMessage(`Information of '${personObject.name}' was already removed from server`);
+            console.log(error);
+            setMessage(
+              `Information of '${personObject.name}' was already removed from server`
+            );
             setColor("red");
             setTimeout(() => {
               setColor("invisible");
             }, 5000);
           });
       }
-  }
+    }
   };
 
   const handleDeletePerson = (id, name) => {
@@ -146,7 +143,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} color={color}/>
+      <Notification message={message} color={color} />
       <Filter value={filterText} onChange={handleFilterTextChange} />
       <h2>Add new</h2>
       <PersonForm
