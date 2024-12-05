@@ -2,6 +2,23 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
+const mongoose = require('mongoose')
+
+const password = process.argv[2]
+
+const url =
+`mongodb://myUserAdmin:${password}@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.3.1`
+
+mongoose.set('strictQuery',false)
+mongoose.connect(url)
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String,
+})
+
+const Person = mongoose.model('Person', personSchema)
+
 app.use(cors())
 
 app.use(express.json());
